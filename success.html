@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In Success</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Sign In Successful</h1>
+        <p id="welcome"></p>
+        <p id="duration"></p>
+        <div class="button-container">
+            <button id="logoutButton" class="green-button">Logout</button>
+            <button id="dashboardButton" class="blue-button">Dashboard</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const message = sessionStorage.getItem('message');
+            const signInTime = sessionStorage.getItem('signInTime');
+            const username = sessionStorage.getItem('username');
+
+            if (username) {
+                document.getElementById('welcome').textContent = `Welcome, ${username}`;
+            }
+
+            if (signInTime) {
+                const sessionExpirationTime = 60000; // 1 minute in milliseconds
+                const expirationTime = Number(signInTime) + sessionExpirationTime;
+
+                const checkSessionExpiration = () => {
+                    if (Date.now() >= expirationTime) {
+                        alert('Your session has expired. You will be redirected to the sign-in page.');
+                        sessionStorage.clear();
+                        window.location.href = '/';
+                    }
+                };
+
+                // Check session expiration every second
+                setInterval(checkSessionExpiration, 1000);
+
+                const updateDuration = () => {
+                    const durationInSeconds = Math.floor((Date.now() - signInTime) / 1000);
+                    const durationMessage = durationInSeconds < 60 
+                        ? `${durationInSeconds} seconds ago.` 
+                        : `${Math.floor(durationInSeconds / 60)} minutes ago.`;
+                    document.getElementById('duration').textContent = `Signed in ${durationMessage}`;
+                };
+
+                updateDuration();
+                setInterval(updateDuration, 1000);
+            } else {
+                document.getElementById('duration').textContent = 'No active session.';
+            }
+
+            // Handle logout button click
+            document.getElementById('logoutButton').addEventListener('click', async function() {
+                const response = await fetch('/logout', {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    sessionStorage.clear();
+                    window.location.href = '/';
+                } else {
+                    alert('Logout failed');
+                }
+            });
+
+            // Handle dashboard button click
+            document.getElementById('dashboardButton').addEventListener('click', function() {
+                window.location.href = '/dashboard';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelector("form").addEventListener("submit", async function(event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                const username = document.querySelector("#username").value;
+                const mobile = document.querySelector("#mobile").value;
+                const email = document.querySelector("#email").value;
+                const password = document.querySelector("#password").value;
+                const confirmPassword = document.querySelector("#confirmPassword").value;
+
+                if (password !== confirmPassword) {
+                    document.querySelector("#message").textContent = "Passwords do not match.";
+                    return;
+                }
+
+                const response = await fetch("/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ username, mobile, email, password })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    window.location.href = '/signin';
+                } else {
+                    document.querySelector("#message").textContent = result.message;
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Register</h1>
+        <form>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required><br><br>
+            <label for="mobile">Mobile Number:</label>
+            <input type="text" id="mobile" name="mobile" required><br><br>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required><br><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br><br>
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required><br><br>
+            <div class="button-container">
+                <button type="reset" class="red-button">Reset</button>
+                <button type="submit" class="green-button">Register</button>
+            </div>
+        </form>
+        <div id="message"></div>
+    </div>
+</body>
+</html>
