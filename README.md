@@ -1,2 +1,2 @@
-# Single Sign On System Using MongoDB
-Made up for Indian Ordnance Factory - Ministry of Defence
+# SSO - Single Sign On System
+Indian Ordnance Factory - Ministry of Defence 
